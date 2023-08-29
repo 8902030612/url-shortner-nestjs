@@ -8,14 +8,16 @@ import {
   BadRequestException,
   NotFoundException,
   Redirect,
+  HttpStatus,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @Controller('')
 @ApiTags('URL Shortner')
 export class UrlController {
-  constructor(private readonly urlService: UrlService) {}
+  constructor(private readonly urlService: UrlService) { }
 
   @Post()
   @ApiBody({
@@ -27,43 +29,60 @@ export class UrlController {
     },
   })
   async generateShortURL(
+    @Res() res: Response ,
     @Body('url') url: string,
-  ): Promise<{ ShortUrl: string }> {
-    try {
-      const shortUrl = await this.urlService.generateShortURL(url);
-      return { ShortUrl: shortUrl };
-    } catch (error) {
-      throw new BadRequestException('URL is required');
+  ): Promise<any> {
+    if (!url) {
+      throw new BadRequestException('url is required');
     }
+    const shortUrl = await this.urlService.generateShortURL(url);
+    console.log({ ShortUrl: shortUrl });
+
+    return res.status(HttpStatus.OK).json({
+      message: 'ShortUrl generated successfully!',
+      ShortUrl: shortUrl,
+      statusCode: 200
+    });
   }
 
   @Get('analytics/:shortId')
-  async getAnalytics(@Param('shortId') shortId: string): Promise<any> {
+  async getAnalytics(@Res() res: Response, @Param('shortId') shortId: string): Promise<any> {
     try {
       const analytics = await this.urlService.getAnalytics(shortId);
-      return analytics;
+
+      console.log(analytics);
+
+      return res.status(HttpStatus.OK).json({
+        message: 'Analytics generated successfully!',
+        visitHistory: analytics,
+        statusCode: 200
+      });
     } catch (error) {
       throw new NotFoundException('Analytics not found');
     }
+  }
+
+  // Handle the case where shortId is missing
+  @ApiExcludeEndpoint()
+  @Get('analytics/')
+  async handleMissingShortId(): Promise<void> {
+    throw new BadRequestException('shortId is required');
   }
 
   @Get(':shortId')
   @Redirect()
   async redirectToOriginalUrl(
     @Param('shortId') shortId: string,
-    @Res() res: Response,
   ) {
     const clientIp = await this.urlService.getClientIpInfo();
-    try {
-      const entry = await this.urlService.updateVisitHistory(shortId, clientIp);
+    // console.log(clientIp);
 
-      if (!entry) {
-        throw new NotFoundException('Invalid URL ID');
-      }
+    const entry = await this.urlService.updateVisitHistory(shortId, clientIp);
 
-      return { url: entry.redirectURL };
-    } catch (error) {
-      throw new NotFoundException('Invalid URL ID');
+    if (!entry) {
+      throw new NotFoundException('Invalid shortId');
     }
+
+    return { url: entry.redirectURL };
   }
 }

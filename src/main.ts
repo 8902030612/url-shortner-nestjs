@@ -9,19 +9,24 @@ async function bootstrap() {
     .setTitle('VeriDoc URL Shortner')
     .setDescription('The API description')
     .setVersion('1.0')
-    .addTag('APIs')
+    // .addTag('APIs')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   app.enableCors();
 
   // PORT configaration
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 8000;
+  const HOSTNAME_LOCAL = `http://localhost:${PORT}`;
+  const HOSTNAME_127 = `http://127.0.0.1:${PORT}`;
+
   await app.listen(PORT, () =>
-    console.log(`🌎 Started at http://localhost:${PORT}`),
+    console.log(`🌎 Started at ${HOSTNAME_LOCAL} & ${HOSTNAME_127}`),
   );
   // swagger page
-  console.log(`"Swagger" 🌎 Started at http://localhost:${PORT}/api`);
+  console.log(
+    `"Swagger" 🌎 Started at ${HOSTNAME_LOCAL}/api & ${HOSTNAME_127}/api`,
+  );
 }
 bootstrap();
