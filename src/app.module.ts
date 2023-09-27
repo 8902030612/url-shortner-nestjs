@@ -4,7 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/urlshortner'),
+    MongooseModule.forRoot(
+      'mongodb+srv://DB:admin123@clusterdb.5oifzk2.mongodb.net/urlshortner',
+    ),
     UrlModule,
   ],
 })

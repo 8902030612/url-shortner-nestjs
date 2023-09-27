@@ -12,12 +12,12 @@ async function bootstrap() {
     // .addTag('APIs')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('api', app, document);
 
   app.enableCors();
 
   // PORT configaration
-  const PORT = process.env.PORT || 8000;
+  const PORT = process.env.PORT || 5000;
   const HOSTNAME_LOCAL = `http://localhost:${PORT}`;
   const HOSTNAME_127 = `http://127.0.0.1:${PORT}`;
 

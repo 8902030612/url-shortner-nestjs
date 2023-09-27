@@ -4,10 +4,20 @@ import { InjectModel } from '@nestjs/mongoose';
 //@ts-ignore
 import nanoid from 'nanoid';
 import { Url } from './url.schema';
+import { AxiosError, AxiosResponse } from 'axios';
+import { HttpService } from '@nestjs/axios';
+import {
+  catchError,
+  lastValueFrom,
+  map,
+} from 'rxjs';
 
 @Injectable()
 export class UrlService {
-  constructor(@InjectModel(Url.name) private readonly urlModel: Model<Url>) {}
+  constructor(
+    @InjectModel(Url.name) private readonly urlModel: Model<Url>,
+    private httpService: HttpService,
+  ) {}
 
   async generateShortURL(redirectURL: string): Promise<string> {
     const shortId = nanoid(6);
@@ -17,7 +27,7 @@ export class UrlService {
       redirectURL,
       visitHistory: [],
     });
-    return `${process.env.BASE_URL || 'http://localhost:8000'}/${shortId}`;
+    return `${process.env.BASE_URL || 'http://localhost:5000'}/${shortId}`;
   }
 
   async getAnalytics(shortId: string): Promise<any> {
@@ -28,11 +38,24 @@ export class UrlService {
     };
   }
 
+  // Fetch client IP info
   async getClientIpInfo(): Promise<any> {
-    // Fetch client IP info
-    const response = await fetch('http://ip-api.com/json/?fields=8192');
-    return response.json();
+    const ipApiUrl = 'http://ip-api.com/json/?fields=8192';
+
+    const responseData = await lastValueFrom(
+      this.httpService.get(ipApiUrl).pipe(
+        map((response: AxiosResponse) => {
+          return response.data;
+        }),
+        catchError((error: AxiosError) => {
+          throw error;
+        }),
+      ),
+    );
+    return responseData;
+   
   }
+
   async updateVisitHistory(shortId: string, clientIp: any): Promise<any> {
     return this.urlModel.findOneAndUpdate(
       { shortId },

@@ -17,7 +17,7 @@ import { Response } from 'express';
 @Controller('')
 @ApiTags('URL Shortner')
 export class UrlController {
-  constructor(private readonly urlService: UrlService) { }
+  constructor(private readonly urlService: UrlService) {}
 
   @Post()
   @ApiBody({
@@ -29,7 +29,7 @@ export class UrlController {
     },
   })
   async generateShortURL(
-    @Res() res: Response ,
+    @Res() res: Response,
     @Body('url') url: string,
   ): Promise<any> {
     if (!url) {
@@ -41,21 +41,24 @@ export class UrlController {
     return res.status(HttpStatus.OK).json({
       message: 'ShortUrl generated successfully!',
       ShortUrl: shortUrl,
-      statusCode: 200
+      statusCode: 200,
     });
   }
 
   @Get('analytics/:shortId')
-  async getAnalytics(@Res() res: Response, @Param('shortId') shortId: string): Promise<any> {
+  async getAnalytics(
+    @Res() res: Response,
+    @Param('shortId') shortId: string,
+  ): Promise<any> {
     try {
       const analytics = await this.urlService.getAnalytics(shortId);
 
-      console.log(analytics);
+      // console.log(analytics);
 
       return res.status(HttpStatus.OK).json({
         message: 'Analytics generated successfully!',
         visitHistory: analytics,
-        statusCode: 200
+        statusCode: 200,
       });
     } catch (error) {
       throw new NotFoundException('Analytics not found');
@@ -71,9 +74,7 @@ export class UrlController {
 
   @Get(':shortId')
   @Redirect()
-  async redirectToOriginalUrl(
-    @Param('shortId') shortId: string,
-  ) {
+  async redirectToOriginalUrl(@Param('shortId') shortId: string) {
     const clientIp = await this.urlService.getClientIpInfo();
     // console.log(clientIp);
 
