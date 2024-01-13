@@ -11,8 +11,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
-import { ApiBody, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { UrlDto } from './dto';
 
 @Controller('')
 @ApiTags('URL Shortner')
@@ -20,17 +21,9 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
   @Post()
-  @ApiBody({
-    schema: {
-      properties: {
-        url: { type: 'string' },
-      },
-      required: ['url'],
-    },
-  })
   async generateShortURL(
     @Res() res: Response,
-    @Body('url') url: string,
+    @Body() { url }: UrlDto,
   ): Promise<any> {
     if (!url) {
       throw new BadRequestException('url is required');

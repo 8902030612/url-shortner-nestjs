@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-//@ts-ignore
-import nanoid from 'nanoid';
-import { Url } from './url.schema';
+import { nanoid } from 'nanoid';
+
+import { Url } from './entities/url.schema';
 import { AxiosError, AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
-import {
-  catchError,
-  lastValueFrom,
-  map,
-} from 'rxjs';
+import { catchError, lastValueFrom, map } from 'rxjs';
 
 @Injectable()
 export class UrlService {
@@ -53,7 +49,6 @@ export class UrlService {
       ),
     );
     return responseData;
-   
   }
 
   async updateVisitHistory(shortId: string, clientIp: any): Promise<any> {
