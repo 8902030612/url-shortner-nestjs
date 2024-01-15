@@ -13,7 +13,12 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+# Environment Variables
 .env
+.env.*
+*.env
+!.env.gitpod
+!.env.example
 
 # Tests
 /coverage
