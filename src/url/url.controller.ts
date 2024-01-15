@@ -29,7 +29,7 @@ export class UrlController {
       throw new BadRequestException('url is required');
     }
     const shortUrl = await this.urlService.generateShortURL(url);
-    console.log({ ShortUrl: shortUrl });
+    // console.log({ ShortUrl: shortUrl });
 
     return res.status(HttpStatus.OK).json({
       message: 'ShortUrl generated successfully!',
