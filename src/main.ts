@@ -21,8 +21,8 @@ async function bootstrap() {
   // Pipes
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
   // PORT configaration
-  const PORT = process.env.PORT || 5000;
-  const HOSTNAME_LOCAL = `http://localhost:${PORT}`;
+  const PORT = process.env.PORT;
+  const HOSTNAME_LOCAL = process.env.BASE_URL;
   await app.listen(PORT);
   Logger.log(`🚀 Application is running on: ${HOSTNAME_LOCAL}`);
   Logger.log(`🌎 Swagger is running on: ${HOSTNAME_LOCAL}/${swaggerPrefix}`);

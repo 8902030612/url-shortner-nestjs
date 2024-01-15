@@ -16,14 +16,14 @@ export class UrlService {
   ) {}
 
   async generateShortURL(redirectURL: string): Promise<string> {
-    const shortId = nanoid(6);
+    const shortId = nanoid(5);
 
     await this.urlModel.create({
       shortId,
       redirectURL,
       visitHistory: [],
     });
-    return `${process.env.BASE_URL || 'http://localhost:5000'}/${shortId}`;
+    return `${process.env.BASE_URL}/${shortId}`;
   }
 
   async getAnalytics(shortId: string): Promise<any> {
