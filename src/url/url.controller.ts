@@ -28,12 +28,13 @@ export class UrlController {
     if (!url) {
       throw new BadRequestException('url is required');
     }
-    const shortUrl = await this.urlService.generateShortURL(url);
+    const shortId = await this.urlService.generateShortURL(url);
     // console.log({ ShortUrl: shortUrl });
 
     return res.status(HttpStatus.OK).json({
       message: 'ShortUrl generated successfully!',
-      ShortUrl: shortUrl,
+      ShortId: shortId,
+      ShortUrl: `${process.env.BASE_URL}/${shortId}`,
       statusCode: 200,
     });
   }

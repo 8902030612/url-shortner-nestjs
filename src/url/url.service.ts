@@ -23,7 +23,7 @@ export class UrlService {
       redirectURL,
       visitHistory: [],
     });
-    return `${process.env.BASE_URL}/${shortId}`;
+    return shortId;
   }
 
   async getAnalytics(shortId: string): Promise<any> {
