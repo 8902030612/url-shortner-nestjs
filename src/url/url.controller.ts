@@ -14,6 +14,7 @@ import { UrlService } from './url.service';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UrlDto } from './dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('')
 @ApiTags('URL Shortner')
@@ -35,10 +36,11 @@ export class UrlController {
       message: 'ShortUrl generated successfully!',
       ShortId: shortId,
       ShortUrl: `${process.env.BASE_URL}/${shortId}`,
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
     });
   }
 
+  @SkipThrottle()
   @Get('analytics/:shortId')
   async getAnalytics(
     @Res() res: Response,
@@ -47,12 +49,10 @@ export class UrlController {
     try {
       const analytics = await this.urlService.getAnalytics(shortId);
 
-      // console.log(analytics);
-
       return res.status(HttpStatus.OK).json({
         message: 'Analytics generated successfully!',
         visitHistory: analytics,
-        statusCode: 200,
+        statusCode: HttpStatus.OK,
       });
     } catch (error) {
       throw new NotFoundException('Analytics not found');
@@ -60,6 +60,7 @@ export class UrlController {
   }
 
   // Handle the case where shortId is missing
+  @SkipThrottle()
   @ApiExcludeEndpoint()
   @Get('analytics/')
   async handleMissingShortId(): Promise<void> {
@@ -67,10 +68,10 @@ export class UrlController {
   }
 
   @Get(':shortId')
+  @SkipThrottle()
   @Redirect()
   async redirectToOriginalUrl(@Param('shortId') shortId: string) {
     const clientIp = await this.urlService.getClientIpInfo();
-    // console.log(clientIp);
 
     const entry = await this.urlService.updateVisitHistory(shortId, clientIp);
 
