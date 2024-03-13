@@ -26,6 +26,10 @@ export class UrlService {
     return shortId;
   }
 
+  extractShortID(shortUrl: string): string {
+    return shortUrl.substring(shortUrl.lastIndexOf('/') + 1);
+  }
+
   async getAnalytics(shortId: string): Promise<any> {
     const result = await this.urlModel.findOne({ shortId });
     return {

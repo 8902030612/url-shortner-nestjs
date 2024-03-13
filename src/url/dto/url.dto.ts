@@ -12,3 +12,9 @@ export class UrlDto {
   )
   url: string;
 }
+
+export class ShortUrlDto {
+  @ApiProperty()
+  @IsString({ message: 'URL must be a string' })
+  shortUrl: string;
+}
