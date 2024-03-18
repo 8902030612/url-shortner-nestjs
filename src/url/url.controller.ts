@@ -13,7 +13,7 @@ import {
 import { UrlService } from './url.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ShortUrlDto, UrlDto } from './dto';
+import { CustomShortURIDto, ShortUrlDto, UrlDto } from './dto';
 import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('')
@@ -30,6 +30,30 @@ export class UrlController {
       throw new BadRequestException('url is required');
     }
     const shortId = await this.urlService.generateShortURL(url);
+    // console.log({ ShortUrl: shortUrl });
+
+    return res.status(HttpStatus.OK).json({
+      message: 'ShortUrl generated successfully!',
+      ShortId: shortId,
+      ShortUrl: `${process.env.BASE_URL}/${shortId}`,
+      statusCode: HttpStatus.OK,
+    });
+  }
+
+  // customSlugShortedURI
+  @Post('/customSlug')
+  @SkipThrottle()
+  async generateCustomShortURL(
+    @Res() res: Response,
+    @Body() { url, customSlug }: CustomShortURIDto,
+  ): Promise<any> {
+    if (!url) {
+      throw new BadRequestException('url is required');
+    }
+    const shortId = await this.urlService.generateCustomShortURI(
+      url,
+      customSlug,
+    );
     // console.log({ ShortUrl: shortUrl });
 
     return res.status(HttpStatus.OK).json({

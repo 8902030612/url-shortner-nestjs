@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { nanoid } from 'nanoid';
@@ -17,6 +17,28 @@ export class UrlService {
 
   async generateShortURL(redirectURL: string): Promise<string> {
     const shortId = nanoid(5);
+
+    await this.urlModel.create({
+      shortId,
+      redirectURL,
+      visitHistory: [],
+    });
+    return shortId;
+  }
+
+  async generateCustomShortURI(
+    redirectURL: string,
+    customSlug: string,
+  ): Promise<string> {
+    const shortId = customSlug;
+    const existingUrl = await this.urlModel.findOne({ shortId });
+
+    if (existingUrl) {
+      throw new HttpException(
+        'Custom slug is already in use',
+        HttpStatus.CONFLICT,
+      );
+    }
 
     await this.urlModel.create({
       shortId,
