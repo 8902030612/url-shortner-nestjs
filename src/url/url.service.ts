@@ -55,6 +55,7 @@ export class UrlService {
   async getAnalytics(shortId: string): Promise<any> {
     const result = await this.urlModel.findOne({ shortId });
     return {
+      url: result.redirectURL,
       totalClicks: result.visitHistory.length,
       analytics: result.visitHistory,
     };

@@ -13,7 +13,7 @@ import {
 import { UrlService } from './url.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { CustomShortURIDto, ShortUrlDto, UrlDto } from './dto';
+import { UrlDto, CustomShortURIDto, ShortUrlDto } from './dto';
 import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('')
@@ -22,6 +22,7 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
   @Post()
+  // @SkipThrottle()
   async generateShortURL(
     @Res() res: Response,
     @Body() { url }: UrlDto,

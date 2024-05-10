@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    container_name: my-node-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb+srv://DB:admin123@clusterdb.5oifzk2.mongodb.net/urlshortner
+      - BASE_URL=http://localhost:5000
+      - PORT=5000
