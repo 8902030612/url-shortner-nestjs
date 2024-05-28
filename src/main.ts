@@ -2,9 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
+  // app.enableVersioning({
+  //   type: VersioningType.HEADER,
+  //   header: 'Custom-Header',
+  // });
+
   // swagger openapi
   const swaggerPrefix = 'swagger';
   const config = new DocumentBuilder()
@@ -20,17 +28,14 @@ async function bootstrap() {
 
   // Pipes
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+
   // PORT configaration
-  // const PORT = process.env.PORT;
-  // const HOSTNAME_LOCAL = process.env.BASE_URL;
-  // await app.listen(PORT);
-  // Logger.log(`🚀 Application is running on: ${HOSTNAME_LOCAL}`);
-  // Logger.log(`🌎 Swagger is running on: ${HOSTNAME_LOCAL}/${swaggerPrefix}`);
-  const port = process.env.PORT || 5000;
+  const port = configService.getOrThrow<number>('PORT');
+  const baseUrl = configService.getOrThrow<string>('BASE_URL');
+
   await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}`);
-  Logger.log(
-    `🌎 Swagger is running on: http://localhost:${port}/${swaggerPrefix}`,
-  );
+
+  Logger.log(`🚀 Application is running on: ${baseUrl}`);
+  Logger.log(`🌎 Swagger is running on: ${baseUrl}/${swaggerPrefix}`);
 }
 bootstrap();
