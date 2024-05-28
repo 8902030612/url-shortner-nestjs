@@ -9,6 +9,6 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DATABASE_URL=mongodb+srv://DB:admin123@clusterdb.5oifzk2.mongodb.net/urlshortner
+      - DATABASE_URL=mongodb+srv://veridocglobal:6NzqnosZ0yH86Jn6@mongodb-free-veridocglobal.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000/urlshortner
       - BASE_URL=http://localhost:5000
       - PORT=5000

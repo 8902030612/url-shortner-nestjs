@@ -7,20 +7,22 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-
-  // app.enableVersioning({
-  //   type: VersioningType.HEADER,
-  //   header: 'Custom-Header',
-  // });
+  // PORT configaration
+  const port = configService.getOrThrow<number>('PORT');
+  const baseUrl = configService.getOrThrow<string>('BASE_URL');
 
   // swagger openapi
   const swaggerPrefix = 'swagger';
   const config = new DocumentBuilder()
     .setTitle('VeriDoc URL Shortner')
-    .setDescription('The API description')
-    .setVersion('1.0')
-    // .addTag('APIs')
+    .setDescription(
+      'Create, track and share short links with a custom domain name.',
+    )
+    .setVersion('v1.0')
+    .addServer(baseUrl, 'Local')
+    .addBearerAuth()
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(swaggerPrefix, app, document);
 
@@ -28,10 +30,6 @@ async function bootstrap() {
 
   // Pipes
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-
-  // PORT configaration
-  const port = configService.getOrThrow<number>('PORT');
-  const baseUrl = configService.getOrThrow<string>('BASE_URL');
 
   await app.listen(port);
 
